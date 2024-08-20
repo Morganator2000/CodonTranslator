@@ -18,6 +18,7 @@
         android:textAlignment="center"
         android:textSize="8pt"
         android:textColor="@color/white"
+        android:textIsSelectable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"

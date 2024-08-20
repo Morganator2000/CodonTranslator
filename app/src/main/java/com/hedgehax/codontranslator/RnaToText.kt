@@ -18,7 +18,7 @@ class RnaToText : ComponentActivity() {
         val textOutput: TextView = findViewById(R.id.textOutput)
 
         translateButton.setOnClickListener {
-            val rnaSequence = rnaInput.text.toString()
+            val rnaSequence = rnaInput.text.toString().replace("\\s".toRegex(), "")
             if (rnaSequence.isBlank()) {
                 showErrorDialog("You must type something in.")
                 return@setOnClickListener
@@ -42,9 +42,6 @@ class RnaToText : ComponentActivity() {
     class InvalidCharacterException(message: String) : Exception(message)
 
     private fun validateSequence(sequence: String): Boolean {
-        if (sequence.length % 3 != 0) {
-            throw InvalidSequenceException("Incorrect number of characters. Sequence should be in a multiple of three. You have " + (sequence.length % 3) + " extra character(s).")
-        }
 
         val upperSequence = sequence.uppercase()
         val validCharacters = setOf('A', 'C', 'G', 'U')
@@ -53,6 +50,9 @@ class RnaToText : ComponentActivity() {
             if (char !in validCharacters) {
                 throw InvalidCharacterException("Invalid character '$char'.")
             }
+        }
+        if (upperSequence.length % 3 != 0) {
+            throw InvalidSequenceException("Incorrect number of characters. Sequence should be in a multiple of three. You have " + (sequence.length % 3) + " extra character(s).")
         }
         return true
     }

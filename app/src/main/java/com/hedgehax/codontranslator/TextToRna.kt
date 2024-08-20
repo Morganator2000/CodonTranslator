@@ -8,7 +8,6 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.widget.SwitchCompat
 
 class TextToRna : ComponentActivity() {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -65,7 +64,7 @@ class TextToRna : ComponentActivity() {
     class InvalidCharacterException(message: String) : Exception(message)
 
     private fun validateText(text: String): Boolean {
-        val processedText = text.uppercase().trim().replace("[^A-Z]".toRegex(), "")
+        val processedText = text.uppercase().replace("[^A-Z]".toRegex(), "")
         val invalidCharacters = setOf('B', 'J', 'O', 'U', 'X', 'Z')
 
         for (char in processedText) {
@@ -103,7 +102,7 @@ class TextToRna : ComponentActivity() {
     }
 
         private fun textToCodon(text: String): String {
-        val modifiedText = text.uppercase().trim().replace("[^A-Z]".toRegex(), "")
+        val modifiedText = text.uppercase().replace("[^A-Z]".toRegex(), "")
         val aminoAcids = modifiedText.chunked(1)
         val codons = mutableListOf<String>()
 
