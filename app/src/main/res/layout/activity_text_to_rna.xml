@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <EditText
         android:id="@+id/textInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="150dp"
         android:layout_marginEnd="20dp"
         android:hint="Enter text"
         android:minHeight="48dp"
@@ -28,8 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Translate"
         android:background="@color/orange"
+        android:text="Translate"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="@+id/textInput"
         app:layout_constraintStart_toStartOf="@+id/textInput"
@@ -43,6 +43,17 @@
         app:layout_constraintEnd_toEndOf="@+id/translateButton"
         app:layout_constraintStart_toStartOf="@+id/translateButton"
         app:layout_constraintTop_toBottomOf="@+id/translateButton" />
+
+    <Switch
+        android:id="@+id/splitSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:minHeight="48dp"
+        android:text="Split codons"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/textInput"
+        app:layout_constraintStart_toEndOf="@+id/textInput" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,10 +3,11 @@ package com.hedgehax.codontranslator
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)

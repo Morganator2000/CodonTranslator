@@ -94,7 +94,6 @@ class RnaToText : ComponentActivity() {
 
     private fun sequenceToCodon(sequence: String): String {
         val upperSequence = sequence.uppercase()
-        validateSequence(upperSequence)
         val codons = splitSequence(upperSequence)
         val aminoAcids = mutableListOf<String>()
 

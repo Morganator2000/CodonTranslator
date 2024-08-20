@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
-class TextToRna : AppCompatActivity() {
+class TextToRna : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -18,15 +19,15 @@ class TextToRna : AppCompatActivity() {
         val rnaOutput: TextView = findViewById(R.id.rnaOutput)
 
         translateButton.setOnClickListener {
-            val rnaSequence = textInput.text.toString()
-            if (rnaSequence.isBlank()) {
+            val text = textInput.text.toString()
+            if (text.isBlank()) {
                 showErrorDialog("You must type something in.")
                 return@setOnClickListener
             }
             try {
-                if (validateSequence(rnaSequence)) {
-                    val aminoAcidString = sequenceToCodon(rnaSequence)
-                    rnaOutput.text = aminoAcidString
+                if (validateText(text)) {
+                    val acidString = textToCodon(text)
+                    rnaOutput.text = acidString
                 }
             } catch (e: InvalidSequenceException) {
                 showErrorDialog(e.message)
@@ -45,69 +46,55 @@ class TextToRna : AppCompatActivity() {
     class InvalidSequenceException(message: String) : Exception(message)
     class InvalidCharacterException(message: String) : Exception(message)
 
-    //TODO: validateText
-    private fun validateSequence(sequence: String): Boolean {
-        if (sequence.length % 3 != 0) {
-            throw InvalidSequenceException("Incorrect number of characters. Sequence should be in a multiple of three. You have " + (sequence.length % 3) + " extra character(s).")
-        }
+    private fun validateText(text: String): Boolean {
+        val processedText = text.uppercase().trim().replace("[^A-Z]".toRegex(), "")
+        val invalidCharacters = setOf('B', 'J', 'O', 'U', 'X', 'Z')
 
-        val upperSequence = sequence.uppercase()
-        val validCharacters = setOf('A', 'C', 'G', 'U')
-
-        for (char in upperSequence) {
-            if (char !in validCharacters) {
-                throw InvalidCharacterException("Invalid character '$char'.")
+        for (char in processedText) {
+            if (char in invalidCharacters) {
+                throw InvalidCharacterException("Invalid character '$char'. There is no amino acid for B, J, O, U, X, or Z.")
             }
         }
         return true
     }
 
-    //TODO: can this be removed
-    private fun splitSequence(sequence: String): List<String> {
-        return sequence.chunked(3)
-    }
-
-    //TODO: translateText
-    private fun translateCodon(codon: String): String {
-        return when (codon) {
-            "GCA", "GCC", "GCG", "GCU" -> "A"
-            "CGA", "CGC", "CGG", "CGU", "AGA", "AGG" -> "R"
-            "AAU", "AAC" -> "N"
-            "GAU", "GAC" -> "D"
-            "UGU", "UGC" -> "C"
-            "CAA", "CAG" -> "Q"
-            "GAA", "GAG" -> "E"
-            "GGA", "GGC", "GGU", "GGG" -> "G"
-            "CAU", "CAC" -> "H"
-            "AUA", "AUC", "AUU" -> "I"
-            "UUA", "UUG", "CUA", "CUC", "CUG", "CUU" -> "L"
-            "AAA", "AAG" -> "K"
-            "AUG" -> "M"
-            "UUU", "UUC" -> "F"
-            "CCA", "CCC", "CCG", "CCU" -> "P"
-            "AGU", "AGC", "UCA", "UCC", "UCG", "UCU" -> "S"
-            "ACA", "ACC", "ACG", "ACU" -> "T"
-            "UGG" -> "W"
-            "UAU", "UAC" -> "Y"
-            "GUA", "GUC", "GUG", "GUU" -> "V"
-            "UAA", "UAG", "UGA" -> " [stop codon] "
+    private fun translateAcids(aminoAcid: String): String {
+        return when (aminoAcid) {
+            "A" -> listOf("GCA", "GCC", "GCG", "GCU").random()
+            "R" -> listOf("CGA", "CGC", "CGG", "CGU", "AGA", "AGG").random()
+            "N" -> listOf("AAU", "AAC").random()
+            "D" -> listOf("GAU", "GAC").random()
+            "C" -> listOf("UGU", "UGC").random()
+            "Q" -> listOf("CAA", "CAG").random()
+            "E" -> listOf("GAA", "GAG").random()
+            "G" -> listOf("GGA", "GGC", "GGU", "GGG").random()
+            "H" -> listOf("CAU", "CAC").random()
+            "I" -> listOf("AUA", "AUC", "AUU").random()
+            "L" -> listOf("UUA", "UUG", "CUA", "CUC", "CUG", "CUU").random()
+            "K" -> listOf("AAA", "AAG").random()
+            "M" -> "AUG"
+            "F" -> listOf("UUU", "UUC").random()
+            "P" -> listOf("CCA", "CCC", "CCG", "CCU").random()
+            "S" -> listOf("AGU", "AGC", "UCA", "UCC", "UCG", "UCU").random()
+            "T" -> listOf("ACA", "ACC", "ACG", "ACU").random()
+            "W" -> "UGG"
+            "Y" -> listOf("UAU", "UAC").random()
+            "V" -> listOf("GUA", "GUC", "GUG", "GUU").random()
             else -> " Invalid value. How did you do that? "
         }
     }
 
-    //TODO: codonToSequence
-    private fun sequenceToCodon(sequence: String): String {
-        val upperSequence = sequence.uppercase()
-        validateSequence(upperSequence)
-        val codons = splitSequence(upperSequence)
-        val aminoAcids = mutableListOf<String>()
+        private fun textToCodon(text: String): String {
+        val modifiedText = text.uppercase().trim().replace("[^A-Z]".toRegex(), "")
+        val aminos = modifiedText.chunked(1)
+        val codons = mutableListOf<String>()
 
-        for (codon in codons) {
-            val aminoAcid = translateCodon(codon)
-            aminoAcids.add(aminoAcid)
+        for (amino in aminos) {
+            val codon = translateAcids(amino)
+            codons.add(codon)
         }
 
-        return aminoAcids.joinToString("")
+        return codons.joinToString("")
     }
 
     private fun showErrorDialog(message: String?) {
