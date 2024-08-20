@@ -53,7 +53,8 @@
         android:text="Split codons"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/textInput"
-        app:layout_constraintStart_toEndOf="@+id/textInput" />
+        app:layout_constraintStart_toEndOf="@+id/textInput"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -38,10 +38,6 @@ class RnaToText : ComponentActivity() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     class InvalidSequenceException(message: String) : Exception(message)
     class InvalidCharacterException(message: String) : Exception(message)
 

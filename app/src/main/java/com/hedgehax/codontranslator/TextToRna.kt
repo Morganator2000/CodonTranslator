@@ -1,14 +1,17 @@
 package com.hedgehax.codontranslator
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 
 class TextToRna : ComponentActivity() {
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -17,6 +20,27 @@ class TextToRna : ComponentActivity() {
         val textInput: EditText = findViewById(R.id.textInput)
         val translateButton: Button = findViewById(R.id.translateButton)
         val rnaOutput: TextView = findViewById(R.id.rnaOutput)
+        val spaceToggle: Switch = findViewById(R.id.splitSwitch)
+
+        fun formatRnaOutput(rna: String): String {
+            return if (spaceToggle.isChecked) {
+                rna.chunked(3).joinToString(" ")
+            } else {
+                rna.replace(" ", "")
+            }
+        }
+
+        fun updateRnaOutput() {
+            val text = textInput.text.toString()
+            if (validateText(text)) {
+                val acidString = textToCodon(text)
+                rnaOutput.text = formatRnaOutput(acidString)
+            }
+        }
+
+        spaceToggle.setOnCheckedChangeListener { _, _ ->
+            updateRnaOutput()
+        }
 
         translateButton.setOnClickListener {
             val text = textInput.text.toString()
@@ -25,10 +49,7 @@ class TextToRna : ComponentActivity() {
                 return@setOnClickListener
             }
             try {
-                if (validateText(text)) {
-                    val acidString = textToCodon(text)
-                    rnaOutput.text = acidString
-                }
+                updateRnaOutput()
             } catch (e: InvalidSequenceException) {
                 showErrorDialog(e.message)
             } catch (e: InvalidCharacterException) {
@@ -37,10 +58,7 @@ class TextToRna : ComponentActivity() {
                 showErrorDialog("An unknown error occurred.")
             }
         }
-    }
 
-    override fun onPause() {
-        super.onPause()
     }
 
     class InvalidSequenceException(message: String) : Exception(message)
@@ -86,10 +104,10 @@ class TextToRna : ComponentActivity() {
 
         private fun textToCodon(text: String): String {
         val modifiedText = text.uppercase().trim().replace("[^A-Z]".toRegex(), "")
-        val aminos = modifiedText.chunked(1)
+        val aminoAcids = modifiedText.chunked(1)
         val codons = mutableListOf<String>()
 
-        for (amino in aminos) {
+        for (amino in aminoAcids) {
             val codon = translateAcids(amino)
             codons.add(codon)
         }
@@ -104,4 +122,6 @@ class TextToRna : ComponentActivity() {
             .setPositiveButton("OK", null)
             .show()
     }
+
+
 }
